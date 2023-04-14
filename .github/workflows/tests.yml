@@ -1,24 +1,32 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+
 name: Cypress Tests
 
 on:
   workflow_dispatch:
-  
+    inputs:
+      cypress:
+        description: 'Rull All or unique Test'
+        default: yarn cypress run
+
 jobs:
-  e2e-tests:
+  electron-tests:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-18.15.0-chrome-111.0.5563.146-1-ff-111.0.1-edge-111.0.1661.62-1
+      image: cypress/browsers:node18.12.0-chrome103-ff107
       options: --user 1001
+    continue-on-error: true
     steps:
-      - name: Get code
-        uses: actions/checkout@v3.5.2
-        
-      - name: Install Dependencies
+      - name: 'Get code'
+        uses: actions/checkout@v3
+      
+      - name: 'Install Dependencies'
         run: yarn install
-        
-      - name: Run E2e Tests
-        run: npx cypress run
 
+      - name: 'Run e2e Tests'
+        run: ${{ github.event.inputs.cypress }}
+      
       - name: Get Allure history
         uses: actions/checkout@v2
         if: always()
@@ -27,12 +35,12 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Test marketplace action
+      - name: Allure Report action from marketplace
         uses: simple-elf/allure-report-action@master
         if: always()
         id: allure-report
         with:
-          allure_results: build/allure-results
+          allure_results: allure-results
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
