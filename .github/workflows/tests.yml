@@ -7,7 +7,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node18.12.0-chrome103-ff107
+      image: cypress/browsers:node-18.15.0-chrome-111.0.5563.146-1-ff-111.0.1-edge-111.0.1661.62-1
       options: --user 1001
     continue-on-error: true
     steps:
@@ -33,7 +33,7 @@ jobs:
         if: always()
         id: allure-report
         with:
-          allure_results: build/allure-results
+          allure_results: allure-results
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
